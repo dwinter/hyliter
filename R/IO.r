@@ -33,6 +33,8 @@ hybrid_DE <- function(results_dir, species, include_N=FALSE){
 }
 
 
+
+
 unexpressed <- function(mod, level, assay_n=1, min_reads=2){
     M <- assays(mod)[[assay_n]]
     classifier <- colData(mod)[[level]]
@@ -49,8 +51,8 @@ nullified_loci <- function(parent_mod, hybrid_mod, level, assay_n=1, min_reads=2
 }
 
 .classify_expression <- function(x){
-    e_from <- ifelse(x[,1], "NULL", "P1")
-    paste(e_from, ifelse(x[,2], "NULL", "P2"), sep="_")
+    e_from <- ifelse(x[,1], "-", "+")
+    paste(e_from, ifelse(x[,2], "-", "+"), sep="/")
 }
 
 classify_null_alleles <- function(parent_mod, H1, H2, level=1){
@@ -82,8 +84,8 @@ extract_read_counts <- function(H_mod, P_mod, idx){
 }
 
 plot_read_counts <- function(H_mod, P_mod, idx){
-    res <- extract_read_counts(H1_mod, parent_mod, idx)
-    ggplot(res, aes(organism, counts, colour=spp, group=rep)) + geom_jitter(height=0, width=0.04)
+    res <- extract_read_counts(H1_mod, P_mod, idx)
+    ggplot(res, aes(organism, counts, colour=spp, group=rep)) + geom_jitter(height=0, width=0.04, size=3)
 }
 
 
@@ -105,9 +107,9 @@ process_one_h_file <- function(fname, include_N){
 }
         
        
-fit_and_classify <- function(mod, cutoff=2){
+fit_and_classify <- function(mod, parent_1, parent_2, cutoff=2){
     fit <- results(DESeq(mod))
-    parent_class <- cut(fit$log2FoldChange, breaks=c(-Inf, -cutoff,cutoff, Inf), labels=c("P1_dom", "equal", "P2_dom"))
+    parent_class <- cut(fit$log2FoldChange, breaks=c(-Inf, -cutoff,cutoff, Inf), labels=c(parent_1, "equal", parent_2))
     data.frame(fit, parent_class)
 }
 
@@ -128,5 +130,21 @@ hybrid_specific_SNVs <- function(snp_file){
     parents_ref <- apply(SNVs[,6:7], 1, function(x) all(x==0))
     SNVs[child_alt & parents_ref,]
 }
+
+combined_mat <- function(P_mod,  ...){
+    matrices <- lapply(c(P_mod, ...), assay)
+    X <- do.call(cbind, matrices)
+    X
+}
+
+hylite_PCA <- function(mat, snames, sids, rlog=TRUE){
+    colnames(mat) <- NULL
+    big_mat <- DESeqDataSetFromMatrix(mat, colData=data.frame(stype=snames), design = ~stype)
+    if(rlog){
+        big_mat <- rlog(big_mat)
+    }
+    prcomp(t(assay(big_mat)))
+}
+
 
 
