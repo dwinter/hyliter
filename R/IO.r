@@ -84,7 +84,7 @@ extract_read_counts <- function(H_mod, P_mod, idx){
 }
 
 plot_read_counts <- function(H_mod, P_mod, idx){
-    res <- extract_read_counts(H1_mod, P_mod, idx)
+    res <- extract_read_counts(H_mod, P_mod, idx)
     ggplot(res, aes(organism, counts, colour=spp, group=rep)) + geom_jitter(height=0, width=0.04, size=3)
 }
 
