@@ -91,9 +91,9 @@ plot_read_counts <- function(H_mod, P_mod, idx){
 plot_rc_multi<- function(H_mod_list, P_mod, idx){
      p <- .parse_counts(P_mod, idx, "parent")
      p$spp <- sapply(strsplit(as.character(p$spp), "\\."), "[[", 1)
-     h <- mapply(.parse_counts, mod_list, names(H_mod_list), MoreArgs=list(idx=idx), SIMPLIFY=FALSE)
+     h <- mapply(.parse_counts, H_mod_list, names(H_mod_list), MoreArgs=list(idx=idx), SIMPLIFY=FALSE)
      res <- rbind(p, do.call(rbind.data.frame, h))
-     ggplot(res, aes(organism, counts, colour=spp, group=rep)) + geom_jitter(height=0, width=0.04, size=3)
+     ggplot(res, aes(organism, counts, fill=spp, group=rep)) + geom_jitter(height=0, width=0.04, size=3, colour='black', pch=21)
 }
 
     
