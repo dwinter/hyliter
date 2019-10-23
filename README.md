@@ -8,7 +8,7 @@ break unexpectedly or change in the future. If you still want to play with the
 existing functions, you can instal the package using devtools
 
 ```{r}
-devtools::install_github("dwinter/hyliter/")
+devtools::install_github("dwinter/hyliter")
 ```
 
 And use it, here H2 and H1 are hybirds with hylite output ditrectories and 
