@@ -32,6 +32,15 @@ hybrid_DE <- function(results_dir, species, include_N=FALSE){
     
 }
 
+read_hybrid_matrix <- function(results_dir, species, include_N=FALSE, checks=TRUE){
+    fnames <- list.files(results_dir, 
+                         paste0(species, ".*.", "read.summary.txt"), 
+                         full.names=TRUE)
+    read_counts <- do.call(cbind, lapply(fnames, process_one_h_file, include_N))
+    col_data <- data.frame(parent =colnames(read_counts))
+    colnames(read_counts) <- paste(colnames(read_counts), rep(1:(ncol(read_counts)/2), each=2), sep="_")
+}
+
 
 
 
